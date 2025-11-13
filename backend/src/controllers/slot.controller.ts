@@ -11,6 +11,7 @@ export const createSlotHandler = async (req: AuthRequest, res: Response) => {
     const slot = await createSlot(req.user.id, startTime, endTime);
     res.json(slot);
   } catch (err: any) {
+    console.error(err);
     res.status(400).json({ message: err.message });
   }
 };
@@ -20,6 +21,7 @@ export const listSlotsHandler = async (_req: AuthRequest, res: Response) => {
     const slots = await getAllAvailableSlots();
     res.json(slots);
   } catch (err: any) {
+    console.error(err);
     res.status(400).json({ message: err.message });
   }
 };

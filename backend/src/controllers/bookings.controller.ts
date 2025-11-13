@@ -11,6 +11,7 @@ export const createBookingHandler = async (req: AuthRequest, res: Response) => {
     const booking = await createBooking(req.user.id, slotId);
     res.json(booking);
   } catch (err: any) {
+    console.error(err);
     res.status(400).json({ message: err.message });
   }
 };

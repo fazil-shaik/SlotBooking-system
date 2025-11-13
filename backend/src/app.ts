@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import slotRoutes from "./routes/slots.routes.js";
 import bookingRoutes from "./routes/bookings.routes.js";
+import healthRoutes from "./routes/health.routes.js";
 
 const app = express();
 app.use(cors());
@@ -15,5 +16,6 @@ app.get('/',(req,res)=>{
 app.use("/api/auth", authRoutes);
 app.use("/api/slots", slotRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/health", healthRoutes);
 
 export default app;
