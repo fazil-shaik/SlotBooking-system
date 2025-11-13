@@ -5,17 +5,18 @@ import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 import { eq } from "drizzle-orm";
 
-export const registerUser = async (name: string, email: string, password: string, role: string, hourlyRate?: number) => {
+export const registerUser = async (name: string, email: string, password: string, role: "provider" | "client", hourlyRate?: number) => {
   const existing = await db.select().from(users).where(eq(users.email, email));
   if (existing.length > 0) throw new Error("Email already exists");
 
   const hashed = await bcrypt.hash(password, 10);
+  // drizzle's numeric column types expect string values for inserts.
   const [user] = await db.insert(users).values({
     name,
     email,
     password: hashed,
     role,
-    hourlyRate: role === "provider" ? hourlyRate ?? 0 : null
+    hourlyRate: role === "provider" ? (hourlyRate !== undefined && hourlyRate !== null ? String(hourlyRate) : "0") : null
   }).returning();
 
   const token = jwt.sign({ id: user.id, role: user.role }, env.jwtSecret, { expiresIn: "1d" });

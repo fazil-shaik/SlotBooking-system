@@ -15,11 +15,12 @@ export const createBooking = async (clientId: number, slotId: number) => {
 
   const totalCost = calculateTotalCost(slot.startTime, slot.endTime, Number(provider.hourlyRate));
 
+  // numeric DB columns are represented as strings by drizzle; convert before insert
   const [booking] = await db.insert(bookings).values({
     slotId,
     clientId,
     providerId: provider.id,
-    totalCost
+    totalCost: String(totalCost)
   }).returning();
 
   await db.update(slots).set({ status: "booked" }).where(eq(slots.id, slotId));
