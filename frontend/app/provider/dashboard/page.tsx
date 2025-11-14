@@ -34,12 +34,28 @@ export default function ProviderDashboard() {
     }
   });
 
+  const validateSlot = (start: string, end: string) => {
+    if (!start || !end) return { ok: false, message: "Start and end time are required" };
+    const s = new Date(start);
+    const e = new Date(end);
+    if (!isFinite(s.getTime()) || !isFinite(e.getTime())) return { ok: false, message: "Invalid date format" };
+    if (e.getTime() <= s.getTime()) return { ok: false, message: "End time must be after start time" };
+    return { ok: true };
+  };
+
   const createSlot = async () => {
+    const v = validateSlot(slot.startTime, slot.endTime);
+    if (!v.ok) {
+      alert(v.message);
+      return;
+    }
+
     const token = getToken();
     await axios.post(`${BASE_URL}/slots`, {
-      startTime: slot.startTime ? new Date(slot.startTime).toISOString() : null,
-      endTime: slot.endTime ? new Date(slot.endTime).toISOString() : null
+      startTime: new Date(slot.startTime).toISOString(),
+      endTime: new Date(slot.endTime).toISOString()
     }, { headers: { Authorization: `Bearer ${token}` } });
+    setSlot({ startTime: "", endTime: "" });
     refetch();
   };
 
